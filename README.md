@@ -1,3 +1,5 @@
+[![multi-arch images build](https://github.com/konveyor/builder/actions/workflows/multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/multi_arch_image_build.yml)
+
 # Builder
 From time to time we need a newer version of Go to build projects than is available from go-toolset, or other images available on Quay or registry.access.redhat.com.
 
