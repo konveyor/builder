@@ -5,10 +5,11 @@ RUN dnf download --source golang --disablerepo=* --enablerepo=centos-appstream-s
 RUN rpm -ivh ./golang*
 
 # Net and other tests are failing because we're in an unprivileged container
-RUN sed -i 's/fail_on_tests\ 1/fail_on_tests 0/g' /root/rpmbuild/SPECS/golang.spec
-
+RUN sed -i 's/%global\ bcond_with\ strict_fips/%global bcond_with strict_fips\n%bcond_without tests/g' /root/rpmbuild/SPECS/golang.spec
+RUN sed -i 's/%check/%check\n%if %{with tests}/g' /root/rpmbuild/SPECS/golang.spec
+RUN sed -i 's/%files$/%endif\n%files/g' /root/rpmbuild/SPECS/golang.spec
 RUN dnf builddep -y /root/rpmbuild/SPECS/golang.spec
-RUN rpmbuild -ba /root/rpmbuild/SPECS/golang.spec
+RUN rpmbuild -ba /root/rpmbuild/SPECS/golang.spec --without tests
 
 
 FROM registry.access.redhat.com/ubi8:latest
