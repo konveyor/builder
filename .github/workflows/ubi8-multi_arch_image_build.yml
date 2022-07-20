@@ -1,4 +1,4 @@
-name: 'multi-arch images build'
+name: 'UBI 8 multi-arch image build'
  
 on:
   workflow_dispatch:
@@ -32,7 +32,7 @@ jobs:
         with:
           builder: ${{ steps.docker_buildx.outputs.name }}
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.ubi8
           platforms: linux/amd64,linux/ppc64le,linux/arm64,linux/s390x
           push: true
           tags: quay.io/konveyor/builder:latest
