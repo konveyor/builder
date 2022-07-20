@@ -1,0 +1,22 @@
+FROM registry.access.redhat.com/ubi9:latest AS builder
+RUN echo -ne "[centos-appstream-source]\nname=CentOS Stream 9 - AppStream - Source\nbaseurl=http://mirror.stream.centos.org/9-stream/AppStream/source/tree\ngpgcheck=1\nenabled=1\ngpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial\n" > /etc/yum.repos.d/centos-stream-source.repo
+RUN dnf -y install rpm-build dnf-plugins-core
+RUN dnf download --source golang --disablerepo=* --enablerepo=centos-appstream-source
+RUN rpm -ivh ./golang*
+
+# Net and other tests are failing because we're in an unprivileged container
+RUN sed -i 's/%global\ bcond_with\ strict_fips/%global bcond_with strict_fips\n%bcond_without tests/g' /root/rpmbuild/SPECS/golang.spec
+RUN sed -i 's/%check/%check\n%if %{with tests}/g' /root/rpmbuild/SPECS/golang.spec
+RUN sed -i 's/%files$/%endif\n%files/g' /root/rpmbuild/SPECS/golang.spec
+RUN dnf builddep -y /root/rpmbuild/SPECS/golang.spec
+RUN rpmbuild -ba /root/rpmbuild/SPECS/golang.spec --without tests
+
+
+FROM registry.access.redhat.com/ubi9:latest
+COPY --from=builder /root/rpmbuild/RPMS/*/golang-1* ./
+COPY --from=builder /root/rpmbuild/RPMS/*/golang-bin-1* ./
+COPY --from=builder /root/rpmbuild/RPMS/*/golang-src-1* ./
+RUN dnf -y install ./golang* git
+
+#This just makes it easier to switch to/from go-toolset.
+ENV APP_ROOT /opt/app-root
