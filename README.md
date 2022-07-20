@@ -1,4 +1,5 @@
-[![multi-arch images build](https://github.com/konveyor/builder/actions/workflows/multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/multi_arch_image_build.yml)
+[![UBI 8 multi-arch image build](https://github.com/konveyor/builder/actions/workflows/ubi8_multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/ubi8_multi_arch_image_build.yml)
+[![UBI 9 multi-arch image build](https://github.com/konveyor/builder/actions/workflows/ubi9_multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/ubi9_multi_arch_image_build.yml)
 
 # Builder
 From time to time we need a newer version of Go to build projects than is available from go-toolset, or other images available on Quay or registry.access.redhat.com.
