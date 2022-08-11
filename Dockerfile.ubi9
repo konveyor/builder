@@ -20,3 +20,4 @@ RUN dnf -y install ./golang* git
 
 #This just makes it easier to switch to/from go-toolset.
 ENV APP_ROOT /opt/app-root
+ENV GOPATH /opt/app-root/src/go
