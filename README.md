@@ -13,3 +13,6 @@ https://vault.centos.org/centos/8-stream/AppStream/Source/SPackages/
   
 To see the most recent version of Go for EL9:  
 http://mirror.stream.centos.org/9-stream/AppStream/source/tree/
+
+## Code of Conduct
+Refer to Konveyor's Code of Conduct [here](https://github.com/konveyor/community/blob/main/CODE_OF_CONDUCT.md).
