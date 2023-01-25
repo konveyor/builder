@@ -3,6 +3,8 @@ name: 'UBI 9 multi-arch image build'
 on:
   workflow_dispatch:
   push:
+  schedule:
+    - cron: '0 0 * * 6'
 jobs:
   multiarch-build:
     runs-on: ubuntu-latest
@@ -36,3 +38,9 @@ jobs:
           platforms: linux/amd64,linux/ppc64le,linux/arm64,linux/s390x
           push: true
           tags: quay.io/konveyor/builder:ubi9-latest
+      - name: push tagged version
+        run: |
+          docker tag quay.io/konveyor/builder:ubi9-latest quay.io/konveyor/builder:ubi9-v$(docker run --rm quay.io/konveyor/builder:ubi9-latest go version | cut -c 14-19)
+          docker tag quay.io/konveyor/builder:ubi9-latest quay.io/konveyor/builder:ubi9-v$(docker run --rm quay.io/konveyor/builder:ubi9-latest go version | cut -c 14-17)
+          docker push quay.io/konveyor/builder:ubi9-v$(docker run --rm quay.io/konveyor/builder:ubi9-latest go version | cut -c 14-19)
+          docker push quay.io/konveyor/builder:ubi9-v$(docker run --rm quay.io/konveyor/builder:ubi9-latest go version | cut -c 14-17)
