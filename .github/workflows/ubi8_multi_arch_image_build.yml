@@ -39,6 +39,7 @@ jobs:
           push: true
           tags: quay.io/konveyor/builder:latest
           cache-to: type=local,dest=/tmp/.buildx-cache
+          provenance: false
       - name: get go version
         id: go_version_patch
         run: | 
@@ -57,3 +58,4 @@ jobs:
           push: true
           tags: quay.io/konveyor/builder:v${{ env.minor_version }},quay.io/konveyor/builder:v${{ env.patch_version }}
           cache-from: type=local,src=/tmp/.buildx-cache
+          provenance: false
