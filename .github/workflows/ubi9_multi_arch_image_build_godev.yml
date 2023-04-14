@@ -78,7 +78,7 @@ jobs:
         with:
           builder: ${{ steps.docker_buildx.outputs.name }}
           context: .
-          file: ./Dockerfile.ubi9
+          file: ./go.dev.Dockerfile.ubi9
           platforms: linux/amd64,linux/ppc64le,linux/arm64,linux/s390x
           push: true
           tags: quay.io/konveyor/builder:ubi9-godev-v${{ env.minor_version }},quay.io/konveyor/builder:ubi9-godev-v${{ env.patch_version }}
