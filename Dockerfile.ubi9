@@ -18,9 +18,15 @@ RUN if [ -z "$GO_VERSION" ] || [ "$GO_VERSION" = "go" ]; then \
     mkdir -p /go && \
     curl -L https://go.dev/dl/$GO_VERSION.$GOOS-$GOARCH.tar.gz -o $GO_VERSION.$GOOS-$GOARCH.tar.gz && \
     tar -C / -xzf $GO_VERSION.$GOOS-$GOARCH.tar.gz && \
+    mkdir -p /opt/app-root/src/ && \
+    mv /go /opt/app-root/src/go && \
     rm -f $GO_VERSION.$GOOS-$GOARCH.tar.gz && \
-    export PATH=$PATH:/go/bin && \
+    export PATH=$PATH:/opt/app-root/src/go/bin && \
     go env && \
     go version
 
-ENV PATH=$PATH:/go/bin
+#This just makes it easier to switch to/from go-toolset.
+
+ENV PATH=$PATH:/opt/app-root/src/go/bin
+ENV APP_ROOT /opt/app-root
+ENV GOPATH /opt/app-root/src/go
