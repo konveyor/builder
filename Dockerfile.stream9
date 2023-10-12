@@ -1,0 +1,12 @@
+FROM quay.io/centos/centos:stream9 as base
+RUN dnf -y install go git make jq && \
+    dnf clean all
+
+FROM base as builder
+RUN go version
+
+#This just makes it easier to switch to/from go-toolset.
+
+ENV PATH=$PATH:/opt/app-root/src/go/bin
+ENV APP_ROOT /opt/app-root
+ENV GOPATH /opt/app-root/src/go
