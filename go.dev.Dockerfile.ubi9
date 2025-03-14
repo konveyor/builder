@@ -1,4 +1,5 @@
 FROM quay.io/konveyor/builder:ubi9-latest AS builder
+RUN dnf -y install unzip && dnf clean all
 # Get golang from go.dev using go install.
 ARG GO_VERSION=1.21.3
 RUN go install golang.org/dl/go${GO_VERSION}@latest

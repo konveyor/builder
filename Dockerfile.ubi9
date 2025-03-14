@@ -1,5 +1,5 @@
 FROM registry.access.redhat.com/ubi9:latest as base
-RUN dnf -y install go git make jq && \
+RUN dnf -y install go git make jq unzip && \
     dnf clean all
 
 FROM base as builder
