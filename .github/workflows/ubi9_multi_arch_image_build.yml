@@ -31,7 +31,7 @@ jobs:
             # Go supports two major releases at a time. The go.dev API returns one entry
             # per supported release. The empty string builds the absolute latest via the
             # Dockerfile, so we only need to add the previous supported version(s).
-            prev_versions=$(curl -s 'https://go.dev/dl/?mode=json' | jq -c '[.[1:][].version | ltrimstr("go")]')
+            prev_versions=$(curl -sfS --retry 3 --retry-delay 5 --max-time 30 'https://go.dev/dl/?mode=json' | jq -c '[.[1:][].version | ltrimstr("go")]')
             matrix=$(echo "$prev_versions" | jq -c '{go_version: ([""] + .)}')
           else
             # For workflow_dispatch or push use the provided input (or empty)
