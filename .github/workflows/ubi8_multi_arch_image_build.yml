@@ -1,5 +1,5 @@
 name: 'UBI 8 multi-arch image build'
- 
+
 on:
   workflow_dispatch:
     inputs:
@@ -18,55 +18,81 @@ on:
       - 'Dockerfile.ubi8'
       - '.github/workflows/ubi8_multi_arch_image_build.yml'
 jobs:
-  multiarch-build:
+  determine-versions:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Determine Go versions to build
+        id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+            # On schedule and pull_request, build latest (empty) plus all previous supported Go versions.
+            # Go supports two major releases at a time. The go.dev API returns one entry
+            # per supported release. The empty string builds the absolute latest via the
+            # Dockerfile, so we only need to add the previous supported version(s).
+            prev_versions=$(curl -s 'https://go.dev/dl/?mode=json' | jq -c '[.[1:][].version | ltrimstr("go")]')
+            matrix=$(echo "$prev_versions" | jq -c '{go_version: ([""] + .)}')
+          else
+            # For workflow_dispatch or push use the provided input (or empty)
+            input_version="${{ github.event.inputs.go_version }}"
+            matrix=$(jq -nc --arg v "$input_version" '{go_version: [$v]}')
+          fi
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  multiarch-build:
+    needs: determine-versions
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.determine-versions.outputs.matrix) }}
     steps:
       - name: add checkout action...
-        uses: actions/checkout@v2
- 
+        uses: actions/checkout@v6
+
       - name: configure QEMU action...
-        uses: docker/setup-qemu-action@master
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: all
- 
+
       - name: configure Docker Buildx...
         id: docker_buildx
-        uses: docker/setup-buildx-action@master
- 
+        uses: docker/setup-buildx-action@v4
+
       - name: login to Quay.io...
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v4
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_PUBLISH_ROBOT }}
           password: ${{ secrets.QUAY_PUBLISH_TOKEN }}
- 
+
       - name: build Multi-arch images...
-        uses: docker/build-push-action@v3.3.0
+        uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.docker_buildx.outputs.name }}
           context: .
           file: ./Dockerfile.ubi8
           platforms: linux/amd64,linux/ppc64le,linux/arm64,linux/s390x
           push: ${{ github.event_name != 'pull_request' }}
-          tags: quay.io/konveyor/builder:latest${{ github.event.inputs.go_version }}
+          tags: quay.io/konveyor/builder:latest${{ matrix.go_version }}
           cache-to: type=local,dest=/tmp/.buildx-cache
           provenance: false
           build-args: |
-            GO_VERSION=go${{ github.event.inputs.go_version }}
+            GO_VERSION=go${{ matrix.go_version }}
       - name: get go version
         if: github.event_name != 'pull_request'
         id: go_version_patch
-        run: | 
-          echo "patch_version=$(docker run --rm quay.io/konveyor/builder:latest${{ github.event.inputs.go_version }} go version | awk '{ print $3 }' | sed -e 's/^go//')" >> $GITHUB_ENV
+        run: |
+          echo "patch_version=$(docker run --rm quay.io/konveyor/builder:latest${{ matrix.go_version }} go version | awk '{ print $3 }' | sed -e 's/^go//')" >> $GITHUB_ENV
       - name: get go version
         if: github.event_name != 'pull_request'
         id: go_version_minor
-        run: | 
-          echo "minor_version=$(docker run --rm quay.io/konveyor/builder:latest${{ github.event.inputs.go_version }} go version | awk '{ print $3 }' | sed -e 's/^go//' | awk -F '.' '{ print $1 "." $2}')" >> $GITHUB_ENV
+        run: |
+          echo "minor_version=$(docker run --rm quay.io/konveyor/builder:latest${{ matrix.go_version }} go version | awk '{ print $3 }' | sed -e 's/^go//' | awk -F '.' '{ print $1 "." $2}')" >> $GITHUB_ENV
       - name: reuse cache to push tagged Multi-arch images...
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v3.3.0
+        uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.docker_buildx.outputs.name }}
           context: .
@@ -77,4 +103,4 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           provenance: false
           build-args: |
-            GO_VERSION=go${{ github.event.inputs.go_version }}
+            GO_VERSION=go${{ matrix.go_version }}
