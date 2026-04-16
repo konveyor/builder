@@ -130,6 +130,7 @@ jobs:
           merge-multiple: true
 
       - name: login to Quay.io...
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v4
         with:
           registry: quay.io
