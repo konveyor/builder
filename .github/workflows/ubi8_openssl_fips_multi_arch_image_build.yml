@@ -38,6 +38,7 @@ jobs:
             # (matching Go's two-release support policy)
             matrix=$(echo "$fips_releases" | jq -c '
               [.[] | select(.prerelease == false and .draft == false and (.tag_name | endswith("-openssl-fips"))) | .tag_name] |
+              sort_by(split("-")[0] | ltrimstr("go") | split(".") | map(tonumber)) | reverse |
               reduce .[] as $tag (
                 {seen: {}, result: []};
                 ($tag | split("-")[0] | ltrimstr("go") | split(".") | .[0:2] | join(".")) as $minor |
@@ -68,7 +69,7 @@ jobs:
             else
               # Empty input = latest
               fips_tag=$(echo "$fips_releases" | jq -r \
-                '[.[] | select(.prerelease == false and .draft == false and (.tag_name | endswith("-openssl-fips"))) | .tag_name] | first')
+                '[.[] | select(.prerelease == false and .draft == false and (.tag_name | endswith("-openssl-fips"))) | .tag_name] | sort_by(split("-")[0] | ltrimstr("go") | split(".") | map(tonumber)) | reverse | first')
               matrix=$(jq -nc --arg t "$fips_tag" '{include: [{fips_tag: $t, tag_suffix: ""}]}')
             fi
           fi
