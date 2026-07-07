@@ -25,7 +25,7 @@ The Dockerfiles in this repository build `quay.io/konveyor/builder` images with 
 | `Dockerfile.ubi10-openssl-fips` | `registry.access.redhat.com/ubi10` | Go toolchain built from [golang-fips/go](https://github.com/golang-fips/go) for FIPS/OpenSSL support | `ubi10-openssl-fips-latest`, `ubi10-openssl-fips-v1.22`, `ubi10-openssl-fips-v1.22.3` |
 | `go.dev.Dockerfile.ubi9` | `quay.io/konveyor/builder:ubi9-latest` | Installs an additional Go version via `go install golang.org/dl/goX.Y.Z` on top of the UBI 9 image | built via `workflow_dispatch` on `ubi9_multi_arch_image_build_godev.yml` |
 
-All images are multi-arch (`linux/amd64`, `linux/arm64`, `linux/ppc64le`, `linux/s390x`) and are published to `quay.io/konveyor/builder`. Each workflow can be triggered manually (`workflow_dispatch`) with a specific `go_version` input, runs on a weekly schedule to pick up new Go releases, and also runs on pull requests/pushes that touch the relevant Dockerfile.
+All images are multi-arch (`linux/amd64`, `linux/arm64`, `linux/ppc64le`, `linux/s390x`) and are published to `quay.io/konveyor/builder`. Workflows support manual dispatch (`workflow_dispatch`) with a `go_version` input; the UBI*/OpenSSL-FIPS workflows also run on a weekly schedule to pick up new Go releases, and all workflows run on pull requests/pushes that touch the relevant Dockerfile.
 
 To see the most recent version of Go for EL8:  
 https://vault.centos.org/centos/8-stream/AppStream/Source/SPackages/  
