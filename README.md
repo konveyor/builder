@@ -4,13 +4,28 @@
 [![UBI 8 OpenSSL FIPS multi-arch image build](https://github.com/konveyor/builder/actions/workflows/ubi8_openssl_fips_multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/ubi8_openssl_fips_multi_arch_image_build.yml)
 [![UBI 9 OpenSSL FIPS multi-arch image build](https://github.com/konveyor/builder/actions/workflows/ubi9_openssl_fips_multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/ubi9_openssl_fips_multi_arch_image_build.yml)
 [![UBI 10 OpenSSL FIPS multi-arch image build](https://github.com/konveyor/builder/actions/workflows/ubi10_openssl_fips_multi_arch_image_build.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/ubi10_openssl_fips_multi_arch_image_build.yml)
+[![UBI 9 go.dev multi-arch image build](https://github.com/konveyor/builder/actions/workflows/ubi9_multi_arch_image_build_godev.yml/badge.svg)](https://github.com/konveyor/builder/actions/workflows/ubi9_multi_arch_image_build_godev.yml)
 
 # Builder
 From time to time we need a newer version of Go to build projects than is available from go-toolset, or other images available on Quay or registry.access.redhat.com.
 
 While there are usually up to date images on docker.io we tend to hit frequent issues with rate limiting when pulling from there to build on Quay.
 
-This Dockerfile can be used to build an updated image if necessary.
+The Dockerfiles in this repository build `quay.io/konveyor/builder` images with an up to date version of Go, and are published automatically by the GitHub Actions workflows linked above.
+
+## Available images
+
+| Dockerfile | Base | Description | Example tags |
+| --- | --- | --- | --- |
+| `Dockerfile.ubi8` | `registry.access.redhat.com/ubi8` | Go toolchain downloaded from go.dev | `ubi8-latest`, `ubi8-v1.22`, `ubi8-v1.22.3` |
+| `Dockerfile.ubi9` | `registry.access.redhat.com/ubi9` | Go toolchain downloaded from go.dev | `ubi9-latest`, `ubi9-v1.22`, `ubi9-v1.22.3` |
+| `Dockerfile.ubi10` | `registry.access.redhat.com/ubi10` | Go toolchain downloaded from go.dev | `ubi10-latest`, `ubi10-v1.22`, `ubi10-v1.22.3` |
+| `Dockerfile.ubi8-openssl-fips` | `registry.access.redhat.com/ubi8` | Go toolchain built from [golang-fips/go](https://github.com/golang-fips/go) for FIPS/OpenSSL support | `ubi8-openssl-fips-latest`, `ubi8-openssl-fips-v1.22`, `ubi8-openssl-fips-v1.22.3` |
+| `Dockerfile.ubi9-openssl-fips` | `registry.access.redhat.com/ubi9` | Go toolchain built from [golang-fips/go](https://github.com/golang-fips/go) for FIPS/OpenSSL support | `ubi9-openssl-fips-latest`, `ubi9-openssl-fips-v1.22`, `ubi9-openssl-fips-v1.22.3` |
+| `Dockerfile.ubi10-openssl-fips` | `registry.access.redhat.com/ubi10` | Go toolchain built from [golang-fips/go](https://github.com/golang-fips/go) for FIPS/OpenSSL support | `ubi10-openssl-fips-latest`, `ubi10-openssl-fips-v1.22`, `ubi10-openssl-fips-v1.22.3` |
+| `go.dev.Dockerfile.ubi9` | `quay.io/konveyor/builder:ubi9-latest` | Installs an additional Go version via `go install golang.org/dl/goX.Y.Z` on top of the UBI 9 image | built via `workflow_dispatch` on `ubi9_multi_arch_image_build_godev.yml` |
+
+All images are multi-arch (`linux/amd64`, `linux/arm64`, `linux/ppc64le`, `linux/s390x`) and are published to `quay.io/konveyor/builder`. Workflows support manual dispatch (`workflow_dispatch`) with a `go_version` input; the UBI*/OpenSSL-FIPS workflows also run on a weekly schedule to pick up new Go releases, and all workflows run on pull requests/pushes that touch the relevant Dockerfile.
 
 To see the most recent version of Go for EL8:  
 https://vault.centos.org/centos/8-stream/AppStream/Source/SPackages/  
