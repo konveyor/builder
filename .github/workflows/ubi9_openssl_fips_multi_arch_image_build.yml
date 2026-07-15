@@ -11,8 +11,6 @@ on:
     paths:
       - 'Dockerfile.ubi9-openssl-fips'
       - '.github/workflows/ubi9_openssl_fips_multi_arch_image_build.yml'
-  schedule:
-    - cron: '0 2 * * 6'
   pull_request:
     paths:
       - 'Dockerfile.ubi9-openssl-fips'
