@@ -31,7 +31,7 @@ jobs:
           # Uses gh api for authenticated requests (higher rate limit)
           fips_releases=$(gh api repos/golang-fips/go/releases --paginate)
 
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             # Get latest release per minor version, take top 2 minor versions
             # (matching Go's two-release support policy)
             matrix=$(echo "$fips_releases" | jq -c '

@@ -9,11 +9,9 @@ name: 'Scheduled version check and dispatch'
 # to quay.io/konveyor/builder. It only dispatches a build workflow when a newer
 # (differing) version is available than the one currently published.
 #
-# NOTE: workflow_dispatch events created with the default GITHUB_TOKEN do NOT
-# trigger new workflow runs (GitHub prevents recursive runs). A Personal Access
-# Token (or GitHub App token) with `actions: write` on this repository must be
-# provided via the WORKFLOW_DISPATCH_TOKEN secret so the dispatched build
-# workflows actually run.
+# workflow_dispatch events are an explicit exception to the rule that
+# GITHUB_TOKEN cannot trigger new workflow runs, so no additional token is
+# required (see https://docs.github.com/en/actions/concepts/security/github_token).
 
 on:
   workflow_dispatch:
@@ -34,18 +32,12 @@ jobs:
   dispatch:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.WORKFLOW_DISPATCH_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
     steps:
       - name: Check version availability and dispatch builds
         run: |
           set -euo pipefail
-
-          if [ "${DRY_RUN}" != "true" ] && [ -z "${GH_TOKEN}" ]; then
-            echo "ERROR: WORKFLOW_DISPATCH_TOKEN secret is not set. A PAT (or GitHub App"
-            echo "token) with 'actions: write' is required to trigger build workflows."
-            exit 1
-          fi
 
           # --- Standard (non-FIPS) image variants ---------------------------------
           # Maps a UBI variant to its published quay tag prefix and its build workflow.
@@ -99,7 +91,7 @@ jobs:
           # ------------------------------------------------------------------------
           echo "Checking standard (non-FIPS) image versions ..."
           go_json=$(curl -sfS --retry 3 --retry-delay 5 --max-time 30 'https://go.dev/dl/?mode=json')
-          mapfile -t GO_VERSIONS < <(echo "$go_json" | jq -r '[.[] | select(.stable == true) | .version | ltrimstr("go")] | .[]')
+          mapfile -t GO_VERSIONS < <(echo "$go_json" | jq -r '[.[] | select(.stable == true) | .version | ltrimstr("go")] | .[0:2] | .[]')
 
           for idx in "${!GO_VERSIONS[@]}"; do
             ver="${GO_VERSIONS[$idx]}"
