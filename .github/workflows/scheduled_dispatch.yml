@@ -24,6 +24,10 @@ on:
   schedule:
     - cron: '0 0 * * 6'
 
+concurrency:
+  group: scheduled-dispatch
+  cancel-in-progress: false
+
 permissions:
   actions: write
   contents: read
