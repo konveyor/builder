@@ -21,6 +21,9 @@ on:
         required: false
         type: boolean
         default: false
+  push:
+    paths:
+      - '.github/workflows/scheduled_dispatch.yml'
   schedule:
     - cron: '0 0 * * 6'
 
