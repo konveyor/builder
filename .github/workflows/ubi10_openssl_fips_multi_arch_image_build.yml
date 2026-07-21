@@ -11,8 +11,6 @@ on:
     paths:
       - 'Dockerfile.ubi10-openssl-fips'
       - '.github/workflows/ubi10_openssl_fips_multi_arch_image_build.yml'
-  schedule:
-    - cron: '0 2 * * 6'
   pull_request:
     paths:
       - 'Dockerfile.ubi10-openssl-fips'
@@ -33,7 +31,7 @@ jobs:
           # Uses gh api for authenticated requests (higher rate limit)
           fips_releases=$(gh api repos/golang-fips/go/releases --paginate)
 
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             # Get latest release per minor version, take top 2 minor versions
             # (matching Go's two-release support policy)
             matrix=$(echo "$fips_releases" | jq -c '
