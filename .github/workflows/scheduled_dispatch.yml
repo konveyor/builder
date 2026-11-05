@@ -12,6 +12,12 @@ name: 'Scheduled version check and dispatch'
 # workflow_dispatch events are an explicit exception to the rule that
 # GITHUB_TOKEN cannot trigger new workflow runs, so no additional token is
 # required (see https://docs.github.com/en/actions/concepts/security/github_token).
+#
+# The dispatch job sets GH_REPO because it never checks out the repository:
+# without it, `gh workflow run` cannot resolve the repository and fails with
+# "failed to run git: fatal: not a git repository". Only runs on the default
+# branch dispatch builds; pushes to other branches (and manual dispatches from
+# other refs) validate the version check without dispatching.
 
 on:
   workflow_dispatch:
@@ -40,6 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
     steps:
       - name: Check version availability and dispatch builds
@@ -83,7 +91,9 @@ jobs:
           dispatch() {
             # $1 = workflow file, $2 = go_version input
             local wf="$1" input="$2"
-            if [ "${DRY_RUN}" = "true" ]; then
+            if [ "$GITHUB_REF" != "refs/heads/${DEFAULT_BRANCH}" ]; then
+              echo "  [skip: not on ${DEFAULT_BRANCH}] would dispatch ${wf} (go_version='${input}')"
+            elif [ "${DRY_RUN}" = "true" ]; then
               echo "  [dry-run] would dispatch ${wf} (go_version='${input}')"
             else
               echo "  dispatching ${wf} (go_version='${input}')"
