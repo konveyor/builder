@@ -172,8 +172,10 @@ jobs:
     needs: determine-versions
     runs-on: ${{ matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     env:
-      # Fork PRs have no access to the Quay secrets: build without pushing.
-      CAN_PUSH: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      # Fork PRs have no access to the Quay secrets, and dependabot PRs run
+      # in the same repo but with secrets withheld entirely: build without
+      # pushing in both cases.
+      CAN_PUSH: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'app/dependabot') }}
       UBI: ${{ inputs.ubi }}
       FLAVOR: ${{ inputs.flavor }}
       DOCKERFILE: ${{ inputs.flavor == 'fips' && 'Dockerfile-fips' || 'Dockerfile' }}
