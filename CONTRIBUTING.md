@@ -39,6 +39,39 @@ Guidelines:
 - When review finds the same logic in two workflows, the fix is
   extraction, not a better comment on the second copy.
 
+## Known alert noise: base-image Python packages
+
+The repository's Dependabot alerts are dominated by four packages that
+come from the UBI base image as RPMs — `python3-urllib3`, `setuptools`,
+`python3-requests`, and `python3-idna`. The SBOM catalogs their
+`dist-info`/`egg-info` metadata, so Dependabot matches them as **pip**
+against upstream advisory ranges (urllib3 2.x, setuptools 84.x, …) that
+these RHEL streams do not ship.
+
+Measured 2026-11-12: `dnf update` in fresh ubi8/ubi9/ubi10 images moved
+10–11 packages each and changed none of the four packages' version
+strings (ubi10's urllib3 moved only in its RPM release suffix). A
+build-time `dnf update` therefore cannot close this version-based alert
+class. That measurement says nothing about any individual CVE: RHEL's
+practice is to backport fixes into the existing version, and whether a
+given CVE is fixed in the installed RPM must be verified against Red
+Hat's advisory status for that RPM release (the Red Hat CVE page,
+`dnf updateinfo`, or OVAL) — never inferred from the version string
+alone.
+
+Drift rebuilds are not a substitute for `dnf update` either:
+`ubi-drift-check.yml` reacts to base manifest digest changes, and the
+Dockerfiles only `dnf install` named packages, so repository updates
+that land without a refreshed base are not guaranteed to arrive through
+a rebuild.
+
+Treat an individual alert as noise only after that per-CVE check, and
+make remediation decisions (including any pipeline change) from it. If
+the alert volume itself ever needs to go, the real levers are removing
+python3 from the images (a breaking change for consumers who run Python
+scripts in them) or excluding `/usr/lib/python*/site-packages` from the
+SBOM catalog — both product decisions, not bug fixes.
+
 ## Commits
 
 Sign off every commit (`git commit -s`) — the DCO check requires it.
