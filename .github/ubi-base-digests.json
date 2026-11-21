@@ -1,11 +1,92 @@
 {
   "8": {
-    "applied": "sha256:44f19e308462e9152cb26d641fc0ce5bf6cbdab3cd101367aed67573eb2cf20e"
+    "applied": "sha256:44f19e308462e9152cb26d641fc0ce5bf6cbdab3cd101367aed67573eb2cf20e",
+    "pending": {
+      "digest": "sha256:31854d90b8a474b0253a2d4a1f71659097654d5992d6d8b811a679f4ff0084bc",
+      "dispatched_at": "2026-11-21T05:08:29Z",
+      "targets": [
+        "hostfips-v1.27.4",
+        "openssl-fips-v1.26.11",
+        "v1.26.11",
+        "v1.27.4"
+      ],
+      "latest": [
+        {
+          "alias": "hostfips-latest",
+          "was": "sha256:eb91e4c319ea0461e247ca34af516b1da02ec148de2e71f005410bfce0ef53c4",
+          "of": "hostfips-v1.27.4"
+        },
+        {
+          "alias": "latest",
+          "was": "sha256:ff00622e6ab497a2e199cfee2426badc96448cbed5be2dc7a756a547f4ccfdcd",
+          "of": "v1.27.4"
+        },
+        {
+          "alias": "openssl-fips-latest",
+          "was": "sha256:d9e150193de32e3dd174673af301aaf54d8f1f0d9e3c1d4cb8fbe713a124edfb",
+          "of": "openssl-fips-v1.26.11"
+        }
+      ]
+    }
   },
   "9": {
-    "applied": "sha256:1e9f0ed9fceafb40878bc1705ff124aa150e3fed873f18c42cdc2dded319e0a8"
+    "applied": "sha256:1e9f0ed9fceafb40878bc1705ff124aa150e3fed873f18c42cdc2dded319e0a8",
+    "pending": {
+      "digest": "sha256:6636b79fba9e5044360366f189333c30b5ce528efd92c40c68b074592b971fcd",
+      "dispatched_at": "2026-11-21T05:08:29Z",
+      "targets": [
+        "ubi9-hostfips-v1.27.4",
+        "ubi9-openssl-fips-v1.26.11",
+        "ubi9-v1.26.11",
+        "ubi9-v1.27.4"
+      ],
+      "latest": [
+        {
+          "alias": "ubi9-hostfips-latest",
+          "was": "sha256:bbc2b3747e50b83b0b64c04915ccde04cf588555e55aac5fe1e06b54302845a7",
+          "of": "ubi9-hostfips-v1.27.4"
+        },
+        {
+          "alias": "ubi9-latest",
+          "was": "sha256:f4f9df1f54ae952c2962d6e4ce2203fa70aba94ef64b3a8ed471d6d3fe168724",
+          "of": "ubi9-v1.27.4"
+        },
+        {
+          "alias": "ubi9-openssl-fips-latest",
+          "was": "sha256:07f8357fa1389161926ee216be9e7ef4fd5fad492047eb1e8915fc2fc1407fca",
+          "of": "ubi9-openssl-fips-v1.26.11"
+        }
+      ]
+    }
   },
   "10": {
-    "applied": "sha256:73ea54bfbfb586075bd3d45df6483a7f68875233c8cc7cebcf9b2bb42306c308"
+    "applied": "sha256:73ea54bfbfb586075bd3d45df6483a7f68875233c8cc7cebcf9b2bb42306c308",
+    "pending": {
+      "digest": "sha256:87ceab8634a53a36c75a8ba7282f09f11c46ab3e8906db6c6d2b3cd2a7dc4f4e",
+      "dispatched_at": "2026-11-21T05:08:29Z",
+      "targets": [
+        "ubi10-hostfips-v1.27.4",
+        "ubi10-openssl-fips-v1.26.11",
+        "ubi10-v1.26.11",
+        "ubi10-v1.27.4"
+      ],
+      "latest": [
+        {
+          "alias": "ubi10-hostfips-latest",
+          "was": "sha256:a811d64e23358bb9912b25aeebd7c8f785e28b75ccce1c85ee60012fd25b22f8",
+          "of": "ubi10-hostfips-v1.27.4"
+        },
+        {
+          "alias": "ubi10-latest",
+          "was": "sha256:607ee01b5bc32d0a19b14bd16e094a54c0af6a3e169e107ba76f3c07a53acfaf",
+          "of": "ubi10-v1.27.4"
+        },
+        {
+          "alias": "ubi10-openssl-fips-latest",
+          "was": "sha256:36ec0c363abaed417b566a7a647581e61d8ed682f0f828ca76df3dfa3848b97c",
+          "of": "ubi10-openssl-fips-v1.26.11"
+        }
+      ]
+    }
   }
 }
